@@ -1,0 +1,580 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.7.0/ol.css" type="text/css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.7.0/ol.js"></script>
+
+<!DOCTYPE html>
+<HTML>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Skane Gas Station</title>
+    <!-- add here more css definition libraries-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.7.0/ol.css" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.7.0/ol.js"></script>
+
+    <title>Skane Gas Stations</title>
+    <style>
+        #container {
+            display: flex;
+            flex-direction: column;
+        }
+        #header{
+            margin: 10px;
+            font-family: "open-sans";
+            display:flex;
+            flex-direction: column;
+        }
+        #titleswitch{
+            display: flex;
+            flex-direction:row;
+            justify-content: center;
+        }
+        #gastitle{
+            color: #1a2036;
+        }
+        #intro{
+            color: #40424a;
+        }
+        #body{
+            display: flex;
+            margin: 10px;
+            flex-direction: row;
+        }
+        #Layers {
+            margin : 10px 
+        }
+        #switcher {
+            display:flex;
+            flex-direction:column;
+            margin: 10px;
+        }
+        #mapspace {
+            width: 1000px;
+            height: 600px;
+        }
+
+       	.form{
+      	margin : 10px;
+      }
+
+      #selectlayers{
+          width: 90px;
+      }
+        .ol-popup {
+        position: absolute;
+        background-color: white;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #cccccc;
+        bottom: 12px;
+        left: -50px;
+        min-width: 280px;
+      }
+      .ol-popup:after, .ol-popup:before {
+        top: 100%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+      }
+      .ol-popup:after {
+        border-top-color: white;
+        border-width: 10px;
+        left: 48px;
+        margin-left: -10px;
+      }
+      .ol-popup:before {
+        border-top-color: #cccccc;
+        border-width: 11px;
+        left: 48px;
+        margin-left: -11px;
+      }
+      .ol-popup-closer {
+        text-decoration: none;
+        position: absolute;
+        top: 2px;
+        right: 8px;
+      }
+      .ol-popup-closer:after {
+        content: "✖";
+      }
+
+      .ol-zoomslider {
+            top: 7em;
+        }
+
+    .ol-overviewmap {
+        bottom: 2em;
+    }
+    
+    .ol-mouse-position {
+            top: auto;
+            bottom: 2em;
+        }
+
+    .switch {
+        align-self: flex-end;
+    }
+    .inner-switch {
+        display: inline-block;
+        cursor: pointer;
+        border: 1px solid #555;
+        border-radius: 1.25rem;
+        width: 3.125rem;
+        text-align: center;
+        font-size: 1rem;
+        padding: 0.1875rem;
+        margin-left: 0.3125rem;
+    }
+    #legend{
+        margin-top: auto;
+
+        margin-left: 10px;
+    }
+    #myDIV{
+        display:none;
+        flex-direction: row;
+        margin: 10px;
+    }
+    .h6{
+        margin:10px;
+    }
+    .dark,
+    .dark * {
+        background-color: #222;
+        color: #e6e6e6;
+        border-color: #e6e6e6;
+    }
+    footer{
+        display:flex;
+        flex-direction: row;
+    }
+    #website{
+        margin:auto;
+        float: left;
+    }
+    </style>
+    <script>
+        function col(x) {
+            text.value = x;
+        }
+    </script>
+
+
+</head>
+
+<body onload="init()">
+    <div id="container">
+      <div id= 'header'>
+            <div class="switch" style="justify-content:right;">Dark mode:              
+                <span class="inner-switch">OFF</span>
+            </div>
+            <p style="text-align:center;">
+                <span style="font-size:28px;"><img src="https://thumbs.dreamstime.com/b/%E5%8A%A0%E6%B2%B9%E7%AB%99%E5%9B%BE%E6%A0%87-%E7%94%A8%E4%BA%8E%E7%BD%91%E7%AB%99%E8%AE%BE%E8%AE%A1%E5%92%8C%E7%A7%BB%E5%8A%A8%E3%80%81%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E7%9A%84%E5%A1%AB%E5%85%85%E5%8A%A0%E6%B2%B9%E7%AB%99%E5%9B%BE%E6%A0%87-157808636.jpg" width="100" height="100" alt="" /></span> 
+            </p>
+        <h1 style="text-align:center;" id='gastitle'>
+            Skåne Gas Station
+        </h1>
+        <p style="text-align:left;" id= "intro">
+            <span style="font-size:16px;">The price of gas is variable in different gas stations and districts. Sometimes, finding a station with a lower gas price could save a lot of money for drivers. But it is inconvenient to compare the price by searching for each gas station and its location.  It became the inspiration for creating a web interactive map which would be able to present all gas stations with current gas prices in Skane by web map service. Details about each gas station and the route would be presented at the same time, for example the exact position of each gas station. </span> 
+        </p>
+        <hr />
+        <p style="text-align:center;">
+        </p>
+      </div>
+      <div id= 'body'>
+        <div id='map'>
+                <div id="mapspace"> </div>
+
+                <div id="popup" class="ol-popup">
+                    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                    <div id="popup-content"></div>
+                </div>
+            </div>
+            <section id="switcher">
+                <div id = "layers">
+                    <div id="control1">
+                        <input type="checkbox" id="heatmap" name="heatmap" value="skane95">
+                        <label for="heatmap">Heatmap</label>
+                    </div>
+                    <div id="control2">
+                        <input type="checkbox" id="gas" name="gas" value="skaneGas" checked>
+                        <label for="gas">Gas Stations</label>
+                    </div>
+                    <div id="control3">
+                        <input type="checkbox" id="roads" name="roads" value="skaneRoad">
+                        <label for="roads">Roads</label>
+                    </div>
+                </div>
+                <!-- Pull-down Menu -->
+                <select name="Layers" id="selectlayers">
+                    <option value="skane95">95 Octanes</option>
+                    <option value="diesel_skane">Diesel</option>
+                </select>
+                <div id="legend">
+                    
+                    <div id="myDIV">
+
+                        <h6 style="margin:10px">Gas Station Brands<br>
+                            <img src="http://stark.nateko.lu.se:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=BirkanwsNY:SLD_point">
+                        </h6>
+                        <h6 style="margin:10px">Heatmap<br>
+                            <img src="http://stark.nateko.lu.se:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&STRICT=false&style=BirkanwsNY:heatmap">
+                        </h6>
+                        
+                    </div>
+                    <button onclick="myFunction()">Legend</button>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        function myFunction() {
+          var x = document.getElementById("myDIV");
+          if (x.style.display === "none") {
+            x.style.display = "flex";          
+          } else {
+            x.style.display = "none";
+          }
+        }
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <script defer="defer" type="text/javascript">
+        //Information about OpenLayers:
+
+        //API - http://openlayers.org/en/master/apidoc/index.html
+        //Examples - https://openlayers.org/en/latest/examples/
+
+
+        function init() {
+
+
+                            //The bounding box of New York streets layer, add the bounding box coordinates in the array
+                            var extent = [1371586.035549, 7408888.277626, 1646453.589263, 7672290.277096]
+
+
+                            //Initial view, what extend and zoom level is displayed when the the website is requested
+
+
+                            var view = new ol.View({
+                                center: ol.proj.transform([13.66, 56], 'EPSG:4326',
+                                    'EPSG:3857'),
+                                zoom: 8.4
+                            });
+
+                            //new layer group
+
+
+
+                            //The source for raster and vector layers
+                            // wmsSource for gas stations
+                        
+                            var wmsSourcet = new ol.source.ImageWMS({
+                                url: 'http://stark.nateko.lu.se:8080/geoserver/wms',
+                                params: {
+                                    'LAYERS': ['BirkanwsNY:skaneGas']
+                                },
+                                serverType: 'geoserver',
+                            });
+                            // wmsSource for gas stations
+                            var wmsSourceDiesel = new ol.source.ImageWMS({
+                                url: 'http://stark.nateko.lu.se:8080/geoserver/wms',
+                                params: {
+                                    'LAYERS': ['BirkanwsNY:gas95_skane']
+                                },
+                                serverType: 'geoserver',
+                            });
+
+                                        var wmsSource = new ol.source.ImageWMS({
+                                url: 'http://stark.nateko.lu.se:8080/geoserver/wms',
+                                params: {
+                                    'LAYERS': ['BirkanwsNY:diesel_skane']
+                                },
+                                serverType: 'geoserver',
+                            });
+                        var wmsSourceEtanol = new ol.source.ImageWMS({
+                                url: 'http://stark.nateko.lu.se:8080/geoserver/wms',
+                                params: {
+                                    'LAYERS': ['BirkanwsNY:etanol_skane']
+                                },
+                                serverType: 'geoserver',
+                            });
+                        
+                            //road network
+
+                        var wmsSourceRoad = new ol.source.ImageWMS({
+                            url: 'http://stark.nateko.lu.se:8080/geoserver/wms',
+                            params: {
+                                'LAYERS': ['BirkanwsNY:skaneselected']
+                            },
+                            serverType: 'geoserver',
+                        });
+
+                            //OpenStreetMap background layer and New York streets layer 
+
+                            var layers =
+                                new ol.layer.Tile({
+                                    label: 'osm',
+                                    source: new ol.source.OSM(),
+                                    visible: true
+                                });
+
+                            var skane95 =
+                                new ol.layer.Image({
+                                    label: 'skane95',
+                                    source: wmsSource,
+                                    visible: false
+                                });
+
+                            
+                            var skaneRoad =
+                                new ol.layer.Image({
+                                    label: 'skaneRoad',
+                                    source: wmsSourceRoad,
+                                    visible: false,
+                            });
+
+                            var diesel_skane =
+                                new ol.layer.Image({
+                                    label: 'diesel_skane',
+                                    source: wmsSourceDiesel,
+                                    visible: false
+                            });
+
+                            var etanol_skane =
+                            new ol.layer.Image({
+                                label: 'etanol_skane',
+                                source: wmsSourceEtanol,
+                                visible: false
+                            });
+
+                            var skaneGas =
+                                new ol.layer.Image({
+                                    label: 'skaneGas',
+                                    source: wmsSourcet,
+                                    visible: true,
+                                    ZIndex: 1000
+                                    
+                                });
+
+                            //checkbox later switching
+                            var changeLayer = function changeLayer() {
+                                var val = $(this).val();
+                                var selection = $( "#selectlayers option:selected" ).val();
+                                var selected = $( "#selectlayers option:selected" );
+
+                                var checked = $(this).is(':checked');
+                                
+                                map.getLayers().forEach(function (layer) {
+                                    if (layer.get('label') === val) {
+                                        if(layer.get('label') === 'skane95'){
+                                            map.getLayers().forEach(function (layer) {
+                                                if (layer.get('label') === selection) {
+                                                layer.setVisible(checked);                                 
+                                                }
+                                            });
+                                        } else {
+                                            layer.setVisible(checked);
+                                        }
+                                    }
+                                });
+                            };
+
+                            $('input').each(function () {
+                                $(this).on('change', changeLayer);
+                            });
+
+                            //selectbox layer switching
+
+                            var changeLayerSelect = function changeLayerSelect() {
+                                var val = $(this).val();
+                                var selected = $(this).find(':selected');
+                                var heat = $('input[name="heatmap"]:checked').val()
+                                map.getLayers().forEach(function (layer) {
+                                    if (layer.get('label') === 'skane95') {
+                                        layer.setVisible(false);
+                                    }
+                                    if (layer.get('label') === 'diesel_skane') {
+                                        layer.setVisible(false); 
+                                    }
+                                    if (layer.get('label') === val && heat === 'skane95') {
+                                        layer.setVisible(selected);                                 
+                                    }
+                                    
+                                });
+                            };
+
+                            $('select').each(function () {
+                                $(this).on('change', changeLayerSelect);
+                            });
+                                                    /**
+                             * Elements that make up the popup.
+                                             */
+                            var container = document.getElementById('popup');
+                            var content = document.getElementById('popup-content');
+                            var closer = document.getElementById('popup-closer');
+
+                            /**
+                             * Create an overlay to anchor the popup to the map.
+                             */
+                            var overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
+                                element: container,
+                                autoPan: true,
+                                autoPanAnimation: {
+                                    duration: 250
+                                }
+                                }));
+
+
+                            closer.onclick = function() {
+                                overlay.setPosition(undefined);
+                                closer.blur();
+                                return false;
+                            };
+
+                            //Bind the map object to our "map" div and add some extra functionality
+
+                            var map = new ol.Map({
+                                layers: [layers, skane95, skaneRoad, diesel_skane, etanol_skane, skaneGas],
+                                controls: ol.control.defaults({
+                                    attributionOptions:
+                                        ({
+                                            collapsible: false
+                                        })
+                                }).extend([
+                                    //Extra functionality of the map
+                                    new ol.control.FullScreen(),
+                                    new ol.control.ZoomSlider(),
+                                    new ol.control.OverviewMap(),
+                                    //Control for displaying coordinates
+                                    new ol.control.MousePosition({
+                                        coordinateFormat:
+                                            ol.coordinate.createStringXY(4),
+                                        projection: 'EPSG:4326'
+                                    }),
+                                    new ol.control.ScaleLine({
+                                        target: document.getElementById('scale-line')
+                                    }),
+                                    //Control for zoming to a defined extent
+                                    
+                                    new ol.control.ZoomToExtent({
+                                        extent: extent
+                                    })
+                                ]),
+                                overlays: [overlay],
+                                target: 'mapspace',
+                                view: view
+                            });
+
+
+                        
+                            function labelPointInMap(x,y){
+                                var coordinate = new ol.geom.Point([y,x]).getCoordinates();
+                                addMarker(coordinate);
+                            }
+                                
+                            //get attribute
+
+                            map.on('singleclick', function(evt) {
+                            var coordinate = evt.coordinate;
+                            var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+                                coordinate, 'EPSG:3857', 'EPSG:4326'));
+
+                            var viewResolution = /** @type {number} */ (view.getResolution());
+                            var url = wmsSourcet.getGetFeatureInfoUrl(
+                                evt.coordinate, viewResolution, 'EPSG:3857', {
+                                    'INFO_FORMAT': 'application/json'
+                        });
+
+                            
+                            // JQuery HTTP GET request
+                            $.get(url, function(resp) {
+                                var features = resp.features;
+                                if (features.length > 0) {
+                                    var properties = features[0].properties;
+                                    fillInfoPanel(properties)
+                                    content.innerHTML = contentp;
+                                    overlay.setPosition(coordinate);
+                                } 
+                            })
+                            
+                            });
+                        
+                            function fillInfoPanel(props) {
+                            var infoPanel = document.getElementById('popup-content');
+                            var content = ''
+                            var heading = '';
+                            var listBegin = '<ul>'
+                            var listItems = '';
+                            var listEnd = '</ul>'
+                            for (var prop in props) {
+                                // skip loop if the property is from prototype
+                                if (!props.hasOwnProperty(prop)) continue;
+                                listItems += '<li>' + '<b>' + prop + "</b> : " + props[prop] +
+                                '</li>';
+                            }
+                            contentp = heading + listBegin + listItems + listEnd;
+                            }
+                
+                            //geolocation
+                            
+                    var geolocation = new ol.Geolocation({
+                        tracking: true
+                    });
+                    // when we get a position update, add the coordinate to the track's
+                    // geometry and recenter the view
+                    // put a marker at our current position
+                    var marker = new ol.Overlay({
+                        element: document.getElementById('location'),
+                        positioning: 'center-center'
+                    });
+                    map.addOverlay(marker);
+			// Add function that fills the panel with attributes collected by the click event
+
+
+
+
+      
+
+                
+            // dark mode
+
+        }
+      
+   
+
+
+    </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+        <script>
+            $( ".inner-switch" ).on("click", function() {
+                if( $( "body" ).hasClass( "dark" )) {
+                $( "body" ).removeClass( "dark" );
+                $( ".inner-switch" ).text( "OFF" );
+                } else {
+                $( "body" ).addClass( "dark" );
+                $( ".inner-switch" ).text( "ON" );
+                }
+            });
+        </script>
+</body>
+<!-- Import OpenLayers Version 4, debug version -->
+
+<!-- Import JQuery -->
+
+</HTML>
