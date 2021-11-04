@@ -33,4 +33,4 @@ Right-top side of the map a checkbox button maintains the transition between thr
 
 Besides the functions that bind the map, there are also other functionalities binding the HTML page. Right-bottom of the map, a legend button binds the visibility of legends for the brand of a gas station and interpolated data. Top-right of the webpage, a switch button binds the color of the background and the text to provide a darker display in order to increased user experience in low light condition.
 
-![main_page](/ss/main_page.png)
+![main_page](/ss/main_page.PNG)
